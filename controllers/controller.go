@@ -1,12 +1,12 @@
 package controllers
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/gomez1983/api-go-gin/models"
+)
 
 func ExibeTodosAlunos(c *gin.Context) { /** Define a função que recebe o contexto da requisição **/
-	c.JSON(200, gin.H{ /** Responde com um status HTTP 200 e um JSON contendo um mapa de chave-valor **/
-		"id":   "1",           /** Chave "id" com valor "1" **/
-		"nome": "André Gomez", /** Chave "nome" com valor "André Gomez" **/
-	})
+	c.JSON(200, models.Alunos)
 }
 
 func Saudacao(c *gin.Context) { /** Define a função que recebe o contexto da requisição **/
