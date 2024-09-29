@@ -8,10 +8,10 @@ import (
 	"github.com/gomez1983/api-go-gin/models"
 )
 
-func ExibeTodosAlunos(c *gin.Context) {
-	var alunos []models.Aluno
-	database.DB.Find(&alunos)
-	c.JSON(200, alunos)
+func ExibeTodosAlunos(c *gin.Context) { /** Define a função para exibir todos os alunos **/
+	var alunos []models.Aluno /** Declara uma variável "alunos" como um slice de modelos do tipo Aluno **/
+	database.DB.Find(&alunos) /** Busca todos os registros da tabela correspondente a "Aluno" no banco de dados e os armazena em "alunos" **/
+	c.JSON(200, alunos)       /** Retorna os alunos no formato JSON com status HTTP 200 (OK) **/
 }
 
 func Saudacao(c *gin.Context) { /** Define a função que recebe o contexto da requisição **/
@@ -30,18 +30,18 @@ func CriaNovoAluno(c *gin.Context) {
 	c.JSON(http.StatusOK, aluno) // Retorna os dados do aluno recém-criado
 }
 
-func BuscaAlunoPorID(c *gin.Context) {
-	var aluno models.Aluno
-	id := c.Params.ByName("id")
-	database.DB.First(&aluno, id)
+func BuscaAlunoPorID(c *gin.Context) { /** Define a função para buscar um aluno pelo ID **/
+	var aluno models.Aluno        /** Declara uma variável "aluno" do tipo Aluno **/
+	id := c.Params.ByName("id")   /** Obtém o parâmetro "id" da URL **/
+	database.DB.First(&aluno, id) /** Busca o primeiro registro de Aluno que corresponde ao ID no banco de dados **/
 
-	if aluno.ID == 0 {
-		c.JSON(http.StatusNotFound, gin.H{
+	if aluno.ID == 0 { /** Verifica se o ID do aluno é zero, indicando que nenhum aluno foi encontrado **/
+		c.JSON(http.StatusNotFound, gin.H{ /** Retorna um JSON com status 404 (Não encontrado) **/
 			"Not found": "Aluno não encontrado"})
-		return
+		return /** Interrompe a execução da função se o aluno não for encontrado **/
 	}
 
-	c.JSON(http.StatusOK, aluno)
+	c.JSON(http.StatusOK, aluno) /** Retorna o aluno encontrado no formato JSON com status HTTP 200 (OK) **/
 }
 
 func DeletaAluno(c *gin.Context) {
