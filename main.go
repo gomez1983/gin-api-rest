@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/gomez1983/api-go-gin/database"
-	"github.com/gomez1983/api-go-gin/models"
 	"github.com/gomez1983/api-go-gin/routes"
 )
 
@@ -13,11 +12,6 @@ O GIN também inclui funcionalidades como recuperação de erros, logging e seri
 **/
 
 func main() { /** Função principal que inicia a aplicação **/
-	database.ConectaComBancoDeDados()
-	models.Alunos = []models.Aluno{ /** Inicializa um slice de alunos com dados fictícios **/
-		{Nome: "André Gomez", CPF: "00000000000", RG: "11111111"}, /** Adiciona o aluno André Gomez com CPF e RG **/
-		{Nome: "Carol", CPF: "11122233314", RG: "212352168"},      /** Adiciona a aluna Carol com CPF e RG **/
-	}
-
-	routes.HandleRequests() /** Chama a função que configura as rotas e inicia o servidor **/
+	database.ConectaComBancoDeDados() /** Conecta com o banco de dados utilizando a função definida no pacote database **/
+	routes.HandleRequests()           /** Configura as rotas e inicia o servidor web **/
 }
