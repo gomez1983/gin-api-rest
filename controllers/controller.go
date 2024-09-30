@@ -67,16 +67,16 @@ func EditaAluno(c *gin.Context) { /** Define a função para editar parcialmente
 	c.JSON(http.StatusOK, aluno)                   /** Retorna um JSON com status 200 (OK) e os dados atualizados do aluno **/
 }
 
-func BuscaAlunoPorCPF(c *gin.Context) {
-	var aluno models.Aluno
-	cpf := c.Param("cpf")
-	database.DB.Where(&models.Aluno{CPF: cpf}).First(&aluno)
+func BuscaAlunoPorCPF(c *gin.Context) { /** Define a função que recebe um Context do Gin para tratar a requisição **/
+	var aluno models.Aluno                                   /** Declara uma variável do tipo Aluno para armazenar o resultado da busca **/
+	cpf := c.Param("cpf")                                    /** Extrai o valor do parâmetro 'cpf' da URL **/
+	database.DB.Where(&models.Aluno{CPF: cpf}).First(&aluno) /** Realiza uma consulta no banco de dados para encontrar o aluno com o CPF fornecido **/
 
-	if aluno.ID == 0 {
+	if aluno.ID == 0 { /** Verifica se o aluno foi encontrado, se não foi, ID será 0 **/
 		c.JSON(http.StatusNotFound, gin.H{
-			"Not found": "Aluno não encontrado"})
+			"Not found": "Aluno não encontrado"}) /** Retorna um erro 404 indicando que o aluno não foi encontrado **/
 		return
 	}
 
-	c.JSON(http.StatusOK, aluno)
+	c.JSON(http.StatusOK, aluno) /** Retorna o aluno encontrado com o status 200 (OK) **/
 }
