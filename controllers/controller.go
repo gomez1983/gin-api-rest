@@ -44,11 +44,11 @@ func BuscaAlunoPorID(c *gin.Context) { /** Define a função para buscar um alun
 	c.JSON(http.StatusOK, aluno) /** Retorna o aluno encontrado no formato JSON com status HTTP 200 (OK) **/
 }
 
-func DeletaAluno(c *gin.Context) {
-	var aluno models.Aluno
-	id := c.Params.ByName("id")
-	database.DB.Delete(&aluno, id)
-	c.JSON(http.StatusOK, gin.H{"data": "Aluno deletado com sucesso"})
+func DeletaAluno(c *gin.Context) { /** Define a função para deletar um aluno **/
+	var aluno models.Aluno                                             /** Declara uma variável "aluno" do tipo Aluno **/
+	id := c.Params.ByName("id")                                        /** Obtém o parâmetro "id" da URL **/
+	database.DB.Delete(&aluno, id)                                     /** Deleta o registro do aluno no banco de dados que corresponde ao ID **/
+	c.JSON(http.StatusOK, gin.H{"data": "Aluno deletado com sucesso"}) /** Retorna um JSON com status 200 (OK) confirmando a exclusão do aluno **/
 }
 
 func EditaAluno(c *gin.Context) {
