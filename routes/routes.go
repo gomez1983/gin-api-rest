@@ -13,6 +13,7 @@ func HandleRequests() {
 	r.POST("/alunos", controllers.CriaNovoAluno)      /** Define a rota "/alunos" para criar um novo aluno usando o método POST **/
 	r.GET("/alunos/:id", controllers.BuscaAlunoPorID) /** Define a rota "/alunos/:id" que usa o método GET para buscar um aluno pelo ID, associando-a à função BuscaAlunoPorID no pacote controllers **/
 	r.DELETE("/alunos/:id", controllers.DeletaAluno)  /** Define a rota "/alunos/:id" que usa o método DELETE para excluir um aluno pelo ID, associando-a à função DeletaAluno no pacote controllers **/
+	r.PATCH("/alunos/:id", controllers.EditaAluno)    /** Define a rota "/alunos/:id" que usa o método PATCH para editar parcialmente um aluno pelo ID, associando-a à função EditaAluno no pacote controllers **/
 	r.Run()                                           /** Inicia o servidor web na porta padrão (8080) **/
 
 }

@@ -20,6 +20,7 @@ func Saudacao(c *gin.Context) { /** Define a função que recebe o contexto da r
 		"API diz:": "E aí " + nome + ", tudo beleza?", /** Monta a mensagem personalizada usando o valor do nome **/
 	})
 }
+
 func CriaNovoAluno(c *gin.Context) {
 	var aluno models.Aluno                           // Declara uma variável do tipo Aluno para armazenar os dados do novo aluno
 	if err := c.ShouldBindJSON(&aluno); err != nil { // Tenta vincular os dados JSON da requisição à estrutura Aluno
@@ -51,19 +52,19 @@ func DeletaAluno(c *gin.Context) { /** Define a função para deletar um aluno *
 	c.JSON(http.StatusOK, gin.H{"data": "Aluno deletado com sucesso"}) /** Retorna um JSON com status 200 (OK) confirmando a exclusão do aluno **/
 }
 
-func EditaAluno(c *gin.Context) {
-	var aluno models.Aluno
-	id := c.Params.ByName("id")
-	database.DB.First(&aluno, id)
+func EditaAluno(c *gin.Context) { /** Define a função para editar parcialmente um aluno **/
+	var aluno models.Aluno        /** Declara uma variável "aluno" do tipo Aluno **/
+	id := c.Params.ByName("id")   /** Obtém o parâmetro "id" da URL **/
+	database.DB.First(&aluno, id) /** Busca o registro do aluno no banco de dados com base no ID **/
 
-	if err := c.ShouldBindJSON(&aluno); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+	if err := c.ShouldBindJSON(&aluno); err != nil { /** Tenta vincular o corpo da solicitação JSON aos campos do aluno **/
+		c.JSON(http.StatusBadRequest, gin.H{ /** Se ocorrer um erro de vinculação, retorna um status 400 (Bad Request) com a mensagem de erro **/
 			"error": err.Error()})
 		return
 	}
 
-	database.DB.Model(&aluno).UpdateColumns(aluno)
-	c.JSON(http.StatusOK, aluno)
+	database.DB.Model(&aluno).UpdateColumns(aluno) /** Atualiza as colunas do aluno no banco de dados com os novos valores **/
+	c.JSON(http.StatusOK, aluno)                   /** Retorna um JSON com status 200 (OK) e os dados atualizados do aluno **/
 }
 
 func BuscaAlunoPorCPF(c *gin.Context) {
