@@ -21,14 +21,23 @@ func Saudacao(c *gin.Context) { /** Define a função que recebe o contexto da r
 	})
 }
 
-func CriaNovoAluno(c *gin.Context) {
-	var aluno models.Aluno                           // Declara uma variável do tipo Aluno para armazenar os dados do novo aluno
-	if err := c.ShouldBindJSON(&aluno); err != nil { // Tenta vincular os dados JSON da requisição à estrutura Aluno
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()}) // Retorna um erro 400 se a vinculação falhar
+func CriaNovoAluno(c *gin.Context) { /** Função para criar um novo aluno no banco de dados **/
+	var aluno models.Aluno /** Declara uma variável "aluno" do tipo Aluno **/
+
+	if err := c.ShouldBindJSON(&aluno); err != nil { /** Tenta vincular o corpo da solicitação JSON aos campos do aluno **/
+		c.JSON(http.StatusBadRequest, gin.H{ /** Se houver erro de vinculação, retorna um status 400 (Bad Request) com a mensagem de erro **/
+			"erro": err.Error()})
 		return
 	}
-	database.DB.Create(&aluno)   // Cria um novo registro de aluno no banco de dados
-	c.JSON(http.StatusOK, aluno) // Retorna os dados do aluno recém-criado
+
+	if err := models.ValidaDadosDeAluno(&aluno); err != nil { /** Valida os dados do aluno utilizando a função ValidaDadosDeAluno **/
+		c.JSON(http.StatusBadRequest, gin.H{ /** Se houver erro de validação, retorna um status 400 (Bad Request) com a mensagem de erro **/
+			"erro": err.Error()})
+		return
+	}
+
+	database.DB.Create(&aluno)   /** Insere o novo aluno no banco de dados **/
+	c.JSON(http.StatusOK, aluno) /** Retorna uma resposta de sucesso com o aluno recém-criado **/
 }
 
 func BuscaAlunoPorID(c *gin.Context) { /** Define a função para buscar um aluno pelo ID **/
@@ -60,6 +69,12 @@ func EditaAluno(c *gin.Context) { /** Define a função para editar parcialmente
 	if err := c.ShouldBindJSON(&aluno); err != nil { /** Tenta vincular o corpo da solicitação JSON aos campos do aluno **/
 		c.JSON(http.StatusBadRequest, gin.H{ /** Se ocorrer um erro de vinculação, retorna um status 400 (Bad Request) com a mensagem de erro **/
 			"error": err.Error()})
+		return
+	}
+
+	if err := models.ValidaDadosDeAluno(&aluno); err != nil { /** Valida os dados do aluno usando a função ValidaDadosDeAluno **/
+		c.JSON(http.StatusBadRequest, gin.H{ /** Se houver erro de validação, retorna um status 400 (Bad Request) com a mensagem de erro **/
+			"erro": err.Error()})
 		return
 	}
 
