@@ -13,11 +13,12 @@ var (
 	err error    /** Declara uma variável global para armazenar possíveis erros **/
 )
 
-func ConectaComBancoDeDados() { /** Função que conecta com o banco de dados **/
-	stringDeConexao := "host=localhost user=root password=root dbname=root port=5432 sslmode=disable" /** String de conexão com o PostgreSQL **/
-	DB, err = gorm.Open(postgres.Open(stringDeConexao))                                               /** Abre a conexão com o banco usando GORM **/
+func ConectaComBancoDeDados() {
+	stringDeConexao := "host=localhost user=root password=root dbname=root port=5433 sslmode=disable"
+	DB, err = gorm.Open(postgres.Open(stringDeConexao))
 	if err != nil {
-		log.Panic("Erro ao conectar com banco de dados") /** Exibe um erro e encerra o programa se a conexão falhar **/
+		log.Panic("Erro ao conectar com banco de dados")
 	}
-	DB.AutoMigrate(&models.Aluno{}) /** Cria ou atualiza a tabela Alunos no banco de dados com base na struct Aluno **/
+
+	DB.AutoMigrate(&models.Aluno{})
 }
