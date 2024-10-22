@@ -25,8 +25,10 @@ func TestVerificaStatusCodeDaSaudacaoComParametro(t *testing.T) { /** Função d
 	r.ServeHTTP(resposta, req)                                           /** Envia a requisição e obtém a resposta simulada **/
 	assert.Equal(t, http.StatusOK, resposta.Code, "Deveriam ser iguais") /** Verifica se o código de status é 200 OK e exibe a mensagem personalizada se falhar **/
 	mockDaResposta := `{"API diz":"E aí andre, tudo beleza?"}`
-	respostaBody, _ := io.ReadAll(resposta.Body)
-	assert.Equal(t, mockDaResposta, string(respostaBody))
-	fmt.Println(string(respostaBody))
-	fmt.Println(mockDaResposta)
+	respostaBody, _ := io.ReadAll(resposta.Body) /** Lê o corpo da resposta retornada e armazena na variável respostaBody **/
+
+	assert.Equal(t, mockDaResposta, string(respostaBody)) /** Verifica se o corpo da resposta é igual ao esperado e lança erro se não for **/
+
+	fmt.Println(string(respostaBody)) /** Imprime o corpo da resposta recebida no console para fins de depuração **/
+	fmt.Println(mockDaResposta)       /** Imprime o corpo mock esperado para comparação visual no console **/
 }
