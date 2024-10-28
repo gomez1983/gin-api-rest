@@ -17,11 +17,10 @@ import (
 var ID int
 
 func SetupDasRotasDeTeste() *gin.Engine { /** Função que configura as rotas para testes **/
+	gin.SetMode(gin.ReleaseMode)
 	rotas := gin.Default() /** Cria uma nova instância do roteador Gin com o middleware padrão (logger e recovery) **/
 	return rotas           /** Retorna o roteador configurado **/
 }
-
-var ID int // Variável global para armazenar o ID do aluno mock
 
 func CriaAlunoMock() {
 	aluno := models.Aluno{
@@ -67,4 +66,17 @@ func TestListandoTodosOsAlunosHandler(t *testing.T) { /** Função de teste que 
 	assert.Equal(t, http.StatusOK, resposta.Code) /** Verifica se o código de status é 200 OK, indicando sucesso na chamada da rota **/
 
 	fmt.Println(resposta.Body) /** Imprime o corpo da resposta no console para depuração e verificação manual **/
+}
+
+func TestBuscaAlunoPorCPFHandler(t *testing.T) { /** Função de teste para verificar a busca de um aluno pelo CPF **/
+	database.ConectaComBancoDeDados()                                /** Conecta ao banco de dados para acesso aos dados durante o teste **/
+	CriaAlunoMock()                                                  /** Cria um registro de aluno mock para simular dados reais **/
+	defer DeletaAlunoMock()                                          /** Remove o aluno mock após o teste para limpar o banco de dados **/
+	r := SetupDasRotasDeTeste()                                      /** Configura as rotas de teste utilizando o Gin **/
+	r.GET("/alunos/cpf/:cpf", controllers.BuscaAlunoPorCPF)          /** Define a rota GET para "/alunos/cpf/:cpf", chamando o controlador BuscaAlunoPorCPF **/
+	req, _ := http.NewRequest("GET", "/alunos/cpf/12345678901", nil) /** Cria uma nova requisição HTTP GET para a rota com CPF de teste **/
+	resposta := httptest.NewRecorder()                               /** Cria um gravador de resposta para capturar a resposta do servidor **/
+	r.ServeHTTP(resposta, req)                                       /** Envia a requisição e armazena a resposta simulada **/
+
+	assert.Equal(t, http.StatusOK, resposta.Code) /** Verifica se o código de status é 200 OK, indicando sucesso na chamada da rota **/
 }
