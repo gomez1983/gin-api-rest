@@ -83,20 +83,31 @@ func TestBuscaAlunoPorCPFHandler(t *testing.T) { /** Função de teste para veri
 	assert.Equal(t, http.StatusOK, resposta.Code) /** Verifica se o código de status é 200 OK, indicando sucesso na chamada da rota **/
 }
 
-func TestBuscaAlunoPorIDHandler(t *testing.T) {
-	database.ConectaComBancoDeDados()
-	CriaAlunoMock()
-	defer DeletaAlunoMock()
-	r := SetupDasRotasDeTeste()
-	r.GET("/alunos/:id", controllers.BuscaAlunoPorID)
-	pathDaBusca := "/alunos/" + strconv.Itoa(ID)
-	req, _ := http.NewRequest("GET", pathDaBusca, nil)
-	resposta := httptest.NewRecorder()
-	r.ServeHTTP(resposta, req)
-	var alunoMock models.Aluno
-	json.Unmarshal(resposta.Body.Bytes(), &alunoMock)
-	assert.Equal(t, "Nome do Aluno Teste", alunoMock.Nome, "Os nomes devem ser iguais")
-	assert.Equal(t, "12345678901", alunoMock.CPF)
-	assert.Equal(t, "123456789", alunoMock.RG)
+func TestBuscaAlunoPorIDHandler(t *testing.T) { /** Função que testa o controlador de busca de aluno por ID **/
+	database.ConectaComBancoDeDados()                                                   /** Estabelece a conexão com o banco de dados para o teste **/
+	CriaAlunoMock()                                                                     /** Cria um aluno mock para realizar o teste **/
+	defer DeletaAlunoMock()                                                             /** Garante que o aluno mock será deletado após o teste **/
+	r := SetupDasRotasDeTeste()                                                         /** Configura as rotas para testes utilizando o Gin **/
+	r.GET("/alunos/:id", controllers.BuscaAlunoPorID)                                   /** Define a rota GET para "/alunos/:id", que chama o controlador BuscaAlunoPorID **/
+	pathDeBusca := "/alunos/" + strconv.Itoa(ID)                                        /** Monta o caminho da requisição utilizando o ID do aluno mock **/
+	req, _ := http.NewRequest("GET", pathDeBusca, nil)                                  /** Cria uma requisição HTTP GET para buscar o aluno mock pelo ID **/
+	resposta := httptest.NewRecorder()                                                  /** Cria um gravador de resposta para simular o comportamento do servidor **/
+	r.ServeHTTP(resposta, req)                                                          /** Envia a requisição e obtém a resposta simulada **/
+	var alunoMock models.Aluno                                                          /** Declara uma variável para armazenar os dados retornados pela API **/
+	json.Unmarshal(resposta.Body.Bytes(), &alunoMock)                                   /** Converte o JSON da resposta para a estrutura Aluno **/
+	assert.Equal(t, "Nome do Aluno Teste", alunoMock.Nome, "Os nomes devem ser iguais") /** Verifica se o nome retornado corresponde ao mock **/
+	assert.Equal(t, "12345678901", alunoMock.CPF)                                       /** Verifica se o CPF retornado corresponde ao mock **/
+	assert.Equal(t, "123456789", alunoMock.RG)                                          /** Verifica se o RG retornado corresponde ao mock **/
+}
 
+func TestDeletaAlunoHandler(t *testing.T) { /** Função que testa a funcionalidade de deletar aluno pelo ID **/
+	database.ConectaComBancoDeDados()                     /** Conecta ao banco de dados para realizar operações durante o teste **/
+	CriaAlunoMock()                                       /** Cria um aluno mock para ser deletado no teste **/
+	r := SetupDasRotasDeTeste()                           /** Configura o roteador para os testes **/
+	r.DELETE("/alunos/:id", controllers.DeletaAluno)      /** Define a rota DELETE para "/alunos/:id", chamando o controlador DeletaAluno **/
+	pathDeBusca := "/alunos/" + strconv.Itoa(ID)          /** Constrói dinamicamente o caminho da requisição usando o ID do aluno mock **/
+	req, _ := http.NewRequest("DELETE", pathDeBusca, nil) /** Cria a requisição HTTP DELETE para a rota "/alunos/:id" **/
+	resposta := httptest.NewRecorder()                    /** Cria um gravador de resposta para simular o comportamento do servidor **/
+	r.ServeHTTP(resposta, req)                            /** Executa a requisição no roteador e obtém a resposta simulada **/
+	assert.Equal(t, http.StatusOK, resposta.Code)         /** Verifica se o código de status retornado é 200 OK **/
 }
