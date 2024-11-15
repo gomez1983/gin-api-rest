@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -17,14 +19,14 @@ import (
 var ID int
 
 func SetupDasRotasDeTeste() *gin.Engine { /** Função que configura as rotas para testes **/
-	gin.SetMode(gin.ReleaseMode)
-	rotas := gin.Default() /** Cria uma nova instância do roteador Gin com o middleware padrão (logger e recovery) **/
-	return rotas           /** Retorna o roteador configurado **/
+	gin.SetMode(gin.ReleaseMode) /** Define o modo de operação do Gin para "ReleaseMode", reduzindo logs durante os testes **/
+	rotas := gin.Default()       /** Cria uma nova instância do roteador Gin com o middleware padrão (logger e recovery) **/
+	return rotas                 /** Retorna o roteador configurado **/
 }
 
 func CriaAlunoMock() {
 	aluno := models.Aluno{
-		Nome: "Nome do aluno Teste",
+		Nome: "Nome do Aluno Teste",
 		CPF:  "12345678901",
 		RG:   "123456789",
 	}
@@ -79,4 +81,22 @@ func TestBuscaAlunoPorCPFHandler(t *testing.T) { /** Função de teste para veri
 	r.ServeHTTP(resposta, req)                                       /** Envia a requisição e armazena a resposta simulada **/
 
 	assert.Equal(t, http.StatusOK, resposta.Code) /** Verifica se o código de status é 200 OK, indicando sucesso na chamada da rota **/
+}
+
+func TestBuscaAlunoPorIDHandler(t *testing.T) {
+	database.ConectaComBancoDeDados()
+	CriaAlunoMock()
+	defer DeletaAlunoMock()
+	r := SetupDasRotasDeTeste()
+	r.GET("/alunos/:id", controllers.BuscaAlunoPorID)
+	pathDaBusca := "/alunos/" + strconv.Itoa(ID)
+	req, _ := http.NewRequest("GET", pathDaBusca, nil)
+	resposta := httptest.NewRecorder()
+	r.ServeHTTP(resposta, req)
+	var alunoMock models.Aluno
+	json.Unmarshal(resposta.Body.Bytes(), &alunoMock)
+	assert.Equal(t, "Nome do Aluno Teste", alunoMock.Nome, "Os nomes devem ser iguais")
+	assert.Equal(t, "12345678901", alunoMock.CPF)
+	assert.Equal(t, "123456789", alunoMock.RG)
+
 }
