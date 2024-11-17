@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -53,7 +54,7 @@ func TestVerificaStatusCodeDaSaudacaoComParametro(t *testing.T) { /** Função d
 	fmt.Println(mockDaResposta)                           /** Imprime o corpo mock esperado para comparação visual no console **/
 }
 
-func TestListandoTodosOsAlunosHandler(t *testing.T) { /** Função de teste que verifica o retorno da listagem de todos os alunos **/
+func TestListaTodosOsAlunosHandler(t *testing.T) { /** Função de teste que verifica o retorno da listagem de todos os alunos **/
 	database.ConectaComBancoDeDados() /** Conecta ao banco de dados para tornar os dados acessíveis durante o teste **/
 	CriaAlunoMock()                   /** Cria um aluno de teste (mock) para garantir que há dados disponíveis na resposta **/
 	defer DeletaAlunoMock()           /** Deleta o aluno de teste após o término do teste, garantindo a limpeza do banco de dados **/
@@ -110,4 +111,34 @@ func TestDeletaAlunoHandler(t *testing.T) { /** Função que testa a funcionalid
 	resposta := httptest.NewRecorder()                    /** Cria um gravador de resposta para simular o comportamento do servidor **/
 	r.ServeHTTP(resposta, req)                            /** Executa a requisição no roteador e obtém a resposta simulada **/
 	assert.Equal(t, http.StatusOK, resposta.Code)         /** Verifica se o código de status retornado é 200 OK **/
+}
+
+func TestEditaUmlunoHandler(t *testing.T) { /** Função de teste que verifica a edição de um aluno **/
+	database.ConectaComBancoDeDados() /** Conecta ao banco de dados para realizar operações durante o teste **/
+	CriaAlunoMock()                   /** Cria um aluno mock para ser editado no teste **/
+	defer DeletaAlunoMock()           /** Garante que o aluno mock será deletado após o teste, mantendo o banco de dados limpo **/
+
+	r := SetupDasRotasDeTeste()                    /** Configura as rotas para testes utilizando o Gin **/
+	r.PATCH("/alunos/:id", controllers.EditaAluno) /** Define a rota PATCH para "/alunos/:id", que chama o controlador EditaAluno **/
+
+	aluno := models.Aluno{Nome: "Nome do Aluno Teste",
+		CPF: "47123456789",
+		RG:  "123456700"} /** Cria uma instância da struct Aluno com os novos dados que serão atualizados **/
+
+	valorJson, _ := json.Marshal(aluno)             /** Converte o objeto aluno para JSON para enviar na requisição PATCH **/
+	pathParaEditar := "/alunos/" + strconv.Itoa(ID) /** Constrói o caminho da requisição PATCH usando o ID do aluno mock criado **/
+
+	req, _ := http.NewRequest("PATCH", pathParaEditar, bytes.NewBuffer(valorJson)) /** Cria uma nova requisição HTTP PATCH para a rota "/alunos/:id" com o corpo JSON dos dados atualizados **/
+	resposta := httptest.NewRecorder()                                             /** Cria um gravador de resposta para simular o comportamento do servidor durante o teste **/
+
+	r.ServeHTTP(resposta, req) /** Envia a requisição PATCH ao roteador configurado e captura a resposta simulada **/
+
+	var alunoMockAtualizado models.Aluno                        /** Declara uma variável para armazenar os dados do aluno atualizado retornados pela resposta **/
+	json.Unmarshal(resposta.Body.Bytes(), &alunoMockAtualizado) /** Converte o corpo da resposta JSON para a struct Aluno, preenchendo alunoMockAtualizado **/
+
+	assert.Equal(t, "47123456789", alunoMockAtualizado.CPF)          /** Verifica se o CPF do aluno atualizado corresponde ao esperado ("47123456789") **/
+	assert.Equal(t, "123456700", alunoMockAtualizado.RG)             /** Verifica se o RG do aluno atualizado corresponde ao esperado ("123456700") **/
+	assert.Equal(t, "Nome do Aluno Teste", alunoMockAtualizado.Nome) /** Verifica se o Nome do aluno atualizado corresponde ao esperado ("Nome do Aluno Teste") **/
+
+	fmt.Println(alunoMockAtualizado.CPF) /** Imprime o CPF do aluno atualizado no console para fins de depuração **/
 }
