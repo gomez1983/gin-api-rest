@@ -6,7 +6,8 @@ import (
 )
 
 func HandleRequests() {
-	r := gin.Default() /** Cria uma nova instância do roteador Gin com middleware padrão (logger e recovery) **/
+	r := gin.Default()              /** Cria uma nova instância do roteador Gin com middleware padrão (logger e recovery) **/
+	r.Static("/assets", "./assets") // Serve arquivos estáticos localizados no diretório "./assets" quando acessados pela URL "/assets"
 
 	r.LoadHTMLGlob("templates/*") /** Carrega todos os arquivos HTML da pasta "templates" para serem usados em renderizações de página **/
 

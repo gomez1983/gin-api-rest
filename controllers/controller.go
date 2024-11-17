@@ -97,16 +97,21 @@ func BuscaAlunoPorCPF(c *gin.Context) { /** Define a função que recebe um Cont
 }
 
 func ExibePaginaIndex(c *gin.Context) {
-	/**
-	- Função que exibe a página inicial.
-	- A rota que utiliza essa função precisa ter carregado os templates HTML previamente com `r.LoadHTMLGlob("templates/*")`.
-	**/
+	// Declara a variável 'alunos' que será preenchida com os dados do banco
+	var alunos []models.Aluno
 
+	// Realiza a consulta no banco de dados para obter todos os alunos
+	// A função 'Find' recupera todos os registros da tabela de alunos
+	// e os armazena na variável 'alunos'
+	database.DB.Find(&alunos)
+
+	// Renderiza a página HTML com o código de status 200 (OK) e passa os dados
+	// para o template 'index.html'. Os dados são passados em um mapa gin.H
 	c.HTML(
-		http.StatusOK, // Código de status HTTP para a resposta, indicando que a requisição foi bem-sucedida.
-		"index.html",  // Nome do arquivo HTML que será renderizado.
-		gin.H{ // Dados dinâmicos que serão passados para o template HTML.
-			"mensagem": "Bem-vindo!", // Um exemplo de chave/valor que pode ser usado no template.
+		http.StatusOK, // Código de status HTTP para a resposta (200 OK)
+		"index.html",  // Nome do arquivo HTML que será renderizado
+		gin.H{ // Mapa de dados a ser passado para o template
+			"alunos": alunos, // A variável 'alunos' contém a lista de alunos
 		},
 	)
 }
