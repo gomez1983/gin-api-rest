@@ -95,3 +95,18 @@ func BuscaAlunoPorCPF(c *gin.Context) { /** Define a função que recebe um Cont
 
 	c.JSON(http.StatusOK, aluno) /** Retorna o aluno encontrado com o status 200 (OK) **/
 }
+
+func ExibePaginaIndex(c *gin.Context) {
+	/**
+	- Função que exibe a página inicial.
+	- A rota que utiliza essa função precisa ter carregado os templates HTML previamente com `r.LoadHTMLGlob("templates/*")`.
+	**/
+
+	c.HTML(
+		http.StatusOK, // Código de status HTTP para a resposta, indicando que a requisição foi bem-sucedida.
+		"index.html",  // Nome do arquivo HTML que será renderizado.
+		gin.H{ // Dados dinâmicos que serão passados para o template HTML.
+			"mensagem": "Bem-vindo!", // Um exemplo de chave/valor que pode ser usado no template.
+		},
+	)
+}

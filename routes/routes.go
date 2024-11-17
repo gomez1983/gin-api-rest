@@ -6,15 +6,69 @@ import (
 )
 
 func HandleRequests() {
+	r := gin.Default() /** Cria uma nova instância do roteador Gin com middleware padrão (logger e recovery) **/
 
-	r := gin.Default()                                      /** Cria uma nova instância do roteador Gin com middleware padrão (logger e recovery) **/
-	r.GET("/alunos", controllers.ExibeTodosAlunos)          /** Define a rota "/alunos" que usa o método GET para exibir todos os alunos **/
-	r.GET("/:nome", controllers.Saudacao)                   /** Define a rota dinâmica "/:nome" que usa o método GET para exibir uma saudação personalizada **/
-	r.POST("/alunos", controllers.CriaNovoAluno)            /** Define a rota "/alunos" para criar um novo aluno usando o método POST **/
-	r.GET("/alunos/:id", controllers.BuscaAlunoPorID)       /** Define a rota "/alunos/:id" que usa o método GET para buscar um aluno pelo ID, associando-a à função BuscaAlunoPorID no pacote controllers **/
-	r.DELETE("/alunos/:id", controllers.DeletaAluno)        /** Define a rota "/alunos/:id" que usa o método DELETE para excluir um aluno pelo ID, associando-a à função DeletaAluno no pacote controllers **/
-	r.PATCH("/alunos/:id", controllers.EditaAluno)          /** Define a rota "/alunos/:id" que usa o método PATCH para editar parcialmente um aluno pelo ID, associando-a à função EditaAluno no pacote controllers **/
-	r.GET("/alunos/cpf/:cpf", controllers.BuscaAlunoPorCPF) /** Define a rota para buscar um aluno pelo CPF, utilizando o método GET **/
-	r.Run()                                                 /** Inicia o servidor web na porta padrão (8080) **/
+	r.LoadHTMLGlob("templates/*") /** Carrega todos os arquivos HTML da pasta "templates" para serem usados em renderizações de página **/
 
+	/** Rotas definidas para a aplicação **/
+	r.GET("/alunos", controllers.ExibeTodosAlunos) /**
+	  - Rota: "/alunos"
+	  - Método: GET
+	  - Ação: Exibe todos os alunos cadastrados
+	  - Controlador: ExibeTodosAlunos
+	  **/
+
+	r.GET("/:nome", controllers.Saudacao) /**
+	  - Rota: "/:nome" (dinâmica)
+	  - Método: GET
+	  - Ação: Exibe uma saudação personalizada com base no nome fornecido na URL
+	  - Controlador: Saudacao
+	  **/
+
+	r.POST("/alunos", controllers.CriaNovoAluno) /**
+	  - Rota: "/alunos"
+	  - Método: POST
+	  - Ação: Cria um novo registro de aluno no banco de dados
+	  - Controlador: CriaNovoAluno
+	  **/
+
+	r.GET("/alunos/:id", controllers.BuscaAlunoPorID) /**
+	  - Rota: "/alunos/:id" (dinâmica)
+	  - Método: GET
+	  - Ação: Busca um aluno pelo ID fornecido na URL
+	  - Controlador: BuscaAlunoPorID
+	  **/
+
+	r.DELETE("/alunos/:id", controllers.DeletaAluno) /**
+	  - Rota: "/alunos/:id" (dinâmica)
+	  - Método: DELETE
+	  - Ação: Exclui o registro de um aluno com base no ID fornecido
+	  - Controlador: DeletaAluno
+	  **/
+
+	r.PATCH("/alunos/:id", controllers.EditaAluno) /**
+	  - Rota: "/alunos/:id" (dinâmica)
+	  - Método: PATCH
+	  - Ação: Atualiza parcialmente os dados de um aluno com base no ID fornecido
+	  - Controlador: EditaAluno
+	  **/
+
+	r.GET("/alunos/cpf/:cpf", controllers.BuscaAlunoPorCPF) /**
+	  - Rota: "/alunos/cpf/:cpf" (dinâmica)
+	  - Método: GET
+	  - Ação: Busca um aluno pelo CPF fornecido na URL
+	  - Controlador: BuscaAlunoPorCPF
+	  **/
+
+	r.GET("/index", controllers.ExibePaginaIndex) /**
+	  - Rota: "/index"
+	  - Método: GET
+	  - Ação: Renderiza uma página inicial utilizando um arquivo HTML carregado em "templates"
+	  - Controlador: ExibePaginaIndex
+	  **/
+
+	r.Run() /**
+	  - Inicia o servidor web usando a porta padrão (8080) ou uma porta especificada pela variável de ambiente `PORT`
+	  - Exemplo: Pode ser acessado localmente em http://localhost:8080
+	  **/
 }
