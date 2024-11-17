@@ -115,3 +115,7 @@ func ExibePaginaIndex(c *gin.Context) {
 		},
 	)
 }
+
+func RotaNaoEncontrada(c *gin.Context) { // Função que lida com requisições para rotas não encontradas (erro 404)
+	c.HTML(http.StatusNotFound, "404.html", nil) // Retorna uma resposta HTML com o código de status 404 e renderiza o template "404.html"
+}

@@ -68,6 +68,8 @@ func HandleRequests() {
 	  - Controlador: ExibePaginaIndex
 	  **/
 
+	r.NoRoute(controllers.RotaNaoEncontrada) // Define um manipulador para quando uma rota não for encontrada (erro 404), chamando a função RotaNaoEncontrada do controlador
+
 	r.Run() /**
 	  - Inicia o servidor web usando a porta padrão (8080) ou uma porta especificada pela variável de ambiente `PORT`
 	  - Exemplo: Pode ser acessado localmente em http://localhost:8080
